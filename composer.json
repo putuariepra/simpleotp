@@ -1,0 +1,28 @@
+{
+    "name": "putuariepra/simpleotp",
+    "type": "library",
+    "description": "Create an OTP process easily for Laravel.",
+    "keywords": ["laravel", "otp"],
+    "autoload": {
+        "psr-4": {
+            "Putuariepra\\SimpleOtp\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "putuariepratama",
+            "email": "putuariepratama@gmail.com"
+        }
+    ],
+    "require": {},
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Putuariepra\\SimpleOtp\\SimpleOtpServiceProvider"
+            ],
+            "aliases": {
+                "SimpleOtp": "Putuariepra\\SimpleOtp\\Facades\\SimpleOtp"
+            }
+        }
+    }
+}
