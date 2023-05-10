@@ -4,12 +4,9 @@ namespace Putuariepra\SimpleOtp\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class SimpleOtpToken extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'procedure',
         'to',
