@@ -6,9 +6,20 @@
     </ul>
 @endif
 
+@if (session()->has('error'))
+    @if(is_array(session('error')))
+        <ul>
+            @foreach (session('error') as $message)
+                <li>{{ $message }}</li>
+            @endforeach
+        </ul>
+    @else
+        {{ session('error') }}
+    @endif
+@endif
+
 <form method='POST'>
-    {{csrf_field()}}
-    <input name='id' value='' placeholder="User ID">
+    {{csrf_field()}}    
     <input name='to' value='' placeholder="To">
     <button type='submit'>Submit</button>
 </form>

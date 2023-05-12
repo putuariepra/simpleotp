@@ -14,8 +14,9 @@ class CreateSimpleOtpTokensTable extends Migration
     public function up()
     {
         Schema::create('simple_otp_tokens', function (Blueprint $table) {            
-            $table->id();            
-            $table->morphs('otpable');
+            $table->bigIncrements('id')->unsigned();
+            $table->string('otpable_type')->nullable();
+            $table->bigInteger('otpable_id',)->unsigned()->nullable();
             $table->string('procedure');
             $table->string('to');
             $table->string('token')->unique();
@@ -23,6 +24,7 @@ class CreateSimpleOtpTokensTable extends Migration
             $table->timestamp('used_at')->nullable();
             $table->timestamp('expired_at')->nullable();
             $table->timestamps();
+            $table->index(['otpable_type', 'otpable_id']);            
         });
     }
 

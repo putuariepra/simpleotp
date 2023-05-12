@@ -12,35 +12,34 @@ class OtpController extends Controller
 {
     public function index($procedure, Request $request)
     {
-      $cnf_procedure = $this->getProcedure($procedure);
-
-      $cls = new $cnf_procedure['class'];
+      $cls = $this->getProcedure($procedure);
 
       return $cls->index($request);      
     }
 
     public function sendPassword($procedure, Request $request, SimpleOtp $otp)
     {
-      $cnf_procedure = $this->getProcedure($procedure);      
+      $cls = $this->getProcedure($procedure);      
 
-      $cls = new $cnf_procedure['class'];
-      
-      $cls->validatorSend($request->all(), $cnf_procedure['user_model'])->validate();
-
-      $user = $cnf_procedure['user_model']::find($request->input('id'));
-
-      $to = $cls->to();
-      $token = $otp->createToken($user, $user->$to, $procedure);
+      if (is_null($cls->config->user_model)) {
+        $to = $cls->to();
+        $token = $otp->createToken($request->input($to), $procedure);
+      }else{
+        $cls->validatorSend($request->all(), $cls->config->user_model)->validate();
+  
+        $user = $cls->config->user_model::find($request->input('id'));
+  
+        $to = $cls->to();
+        $token = $otp->createTokenWithUser($user, $user->$to, $procedure);
+      }
 
       return $cls->send($token, $request);
     }
 
     public function requestPassword($procedure, $token, SimpleOtp $otp)
     {
-      $cnf_procedure = $this->getProcedure($procedure);      
+      $cls = $this->getProcedure($procedure);
 
-      $cls = new $cnf_procedure['class'];           
-      
       $token = $otp->getToken($procedure, $token);
       
       $this->checkToken($cls, $token);
@@ -50,10 +49,8 @@ class OtpController extends Controller
 
     public function verifyPassword($procedure, $token, Request $request, SimpleOtp $otp)
     {
-      $cnf_procedure = $this->getProcedure($procedure);      
+      $cls = $this->getProcedure($procedure);      
 
-      $cls = new $cnf_procedure['class'];           
-      
       $token = $otp->getToken($procedure, $token);
 
       $this->checkToken($cls, $token);
@@ -73,7 +70,16 @@ class OtpController extends Controller
         \abort(404);
       }
 
-      return $procedures[$procedure];      
+      return $this->newChannelClass($procedure, $procedures[$procedure]);
+    }
+
+    private function newChannelClass($procedure, $cnf_procedure)
+    {
+      $cls = new $cnf_procedure['class'];
+      $cls->procedure = $procedure;
+      $cls->config = (object) $cnf_procedure;
+      
+      return $cls;
     }
     
     private function checkToken($cls, $token)

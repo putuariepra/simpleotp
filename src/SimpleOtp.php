@@ -1,6 +1,8 @@
 <?php
 namespace Putuariepra\SimpleOtp;
 
+use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Putuariepra\SimpleOtp\NewSimpleOtpToken;
 use Putuariepra\SimpleOtp\Models\SimpleOtpToken;
@@ -26,7 +28,21 @@ class SimpleOtp{
         ->first();
     }
 
-    function createToken($user, string $to, string $procedure)
+    function createToken(string $to, string $procedure)
+    {
+        $password = rand(100000, (1000000-1));        
+        $token = $this->otp_model::create([
+            'procedure' => $procedure,
+            'to' => $to,
+            'token' => Str::lower(Str::random(40)),
+            'password' => Hash::make($password),
+            'expired_at' => Carbon::now()->addMinutes($this->token_validity_minutes),
+        ]);
+        
+        return new NewSimpleOtpToken($token, $password);
+    }
+
+    function createTokenWithUser($user, string $to, string $procedure)
     {
         $password = rand(100000, (1000000-1));        
         $token = $user->createSimpleOtp($to, Hash::make($password), $this->token_validity_minutes, $procedure);

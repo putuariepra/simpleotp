@@ -9,6 +9,9 @@ use Putuariepra\SimpleOtp\SimpleOtpChannelInterface;
 
 class SimpleOtpChannel implements SimpleOtpChannelInterface
 {
+    public $procedure;
+    public $config;
+
     function index(Request $request)
     {
         return view('simpleotp::index');        
@@ -42,7 +45,7 @@ class SimpleOtpChannel implements SimpleOtpChannelInterface
 
     function to()
     {
-        return 'email';
+        return 'to';
     }
 
     function authenticated($token)
