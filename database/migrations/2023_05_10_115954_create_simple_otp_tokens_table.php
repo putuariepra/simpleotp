@@ -16,7 +16,7 @@ class CreateSimpleOtpTokensTable extends Migration
         Schema::create('simple_otp_tokens', function (Blueprint $table) {            
             $table->bigIncrements('id')->unsigned();
             $table->string('otpable_type')->nullable();
-            $table->bigInteger('otpable_id',)->unsigned()->nullable();
+            $table->bigInteger('otpable_id')->unsigned()->nullable();
             $table->string('procedure');
             $table->string('to');
             $table->string('token')->unique();
