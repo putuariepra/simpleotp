@@ -39,6 +39,11 @@ class OtpEmail extends SimpleOtpChannel {
         ]);
     }
 
+    function to()
+    {
+        return 'to';
+    }
+
     function authenticated($token)
     {
         
@@ -46,6 +51,8 @@ class OtpEmail extends SimpleOtpChannel {
 
     function unauthenticated($token)
     {
-        
+        if (!$token->isMaxAttemptsExceeded()) {
+            return redirect()->back()->with('error', 'OTP Password is incorrect.');
+        }
     }
 }

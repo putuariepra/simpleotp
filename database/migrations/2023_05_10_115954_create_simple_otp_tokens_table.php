@@ -21,6 +21,7 @@ class CreateSimpleOtpTokensTable extends Migration
             $table->string('to');
             $table->string('token')->unique();
             $table->string('password');
+            $table->integer('attempt_counter')->default(0);
             $table->timestamp('used_at')->nullable();
             $table->timestamp('expired_at')->nullable();
             $table->timestamps();

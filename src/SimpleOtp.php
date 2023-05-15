@@ -13,12 +13,18 @@ class SimpleOtp{
 
     private $token_validity_minutes;
 
+    private $max_sends;
+    private $max_sends_minutes;
+
     function __construct()
     {
         $otp_model = config('otp.otp_model', SimpleOtpToken::class);
         $this->otp_model = new $otp_model;
 
         $this->token_validity_minutes = config('otp.token_validity_minutes', 30);
+
+        $this->max_sends = config('otp.max_sends.amount', 3);
+        $this->max_sends_minutes = config('otp.max_sends.per_minutes', 60);
     }
     
     function getToken(string $procedure, string $token)
@@ -26,6 +32,14 @@ class SimpleOtp{
         return $this->otp_model::where('procedure', $procedure)
         ->where('token', $token)
         ->first();
+    }
+
+    function isMaxCreateTokenExceeded(string $to, string $procedure)
+    {
+        $range_date_check = Carbon::now()->subMinutes($this->max_sends_minutes);
+        $count_check = $this->otp_model::where('created_at', '>=', $range_date_check)->whereNull('used_at')->count();
+
+        return $count_check >= $this->max_sends;
     }
 
     function createToken(string $to, string $procedure)

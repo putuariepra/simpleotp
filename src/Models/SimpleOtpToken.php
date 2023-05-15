@@ -4,14 +4,16 @@ namespace Putuariepra\SimpleOtp\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Putuariepra\SimpleOtp\Interfaces\Models\SimpleOtpTokenInterface;
 
-class SimpleOtpToken extends Model
+class SimpleOtpToken extends Model implements SimpleOtpTokenInterface
 {
     protected $fillable = [
         'procedure',
         'to',
         'token',
         'password',
+        'attempt_counter',
         'used_at',
         'expired_at'
     ];
@@ -32,5 +34,9 @@ class SimpleOtpToken extends Model
     function setUsed() {        
         $this->used_at = Carbon::now();
         return $this;
+    }
+
+    function isMaxAttemptsExceeded() {
+        return $this->attempt_counter >= config('otp.max_attempts', 5);
     }
 }
