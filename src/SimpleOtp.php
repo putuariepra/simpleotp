@@ -37,7 +37,7 @@ class SimpleOtp{
     function isMaxCreateTokenExceeded(string $to, string $procedure)
     {
         $range_date_check = Carbon::now()->subMinutes($this->max_sends_minutes);
-        $count_check = $this->otp_model::where('created_at', '>=', $range_date_check)->whereNull('used_at')->count();
+        $count_check = $this->otp_model::where('procedure', $procedure)->where('to', $to)->where('created_at', '>=', $range_date_check)->whereNull('used_at')->count();
 
         return $count_check >= $this->max_sends;
     }
